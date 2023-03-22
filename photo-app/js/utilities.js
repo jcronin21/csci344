@@ -23,4 +23,3 @@ export async function getAccessToken(rootURL, username, password) {
     const data = await response.json();
     return data.access_token;
 }
-

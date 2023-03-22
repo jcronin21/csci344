@@ -2,7 +2,6 @@ body * {
     box-sizing: border-box;
 }
 
-/* Replace with your HW2 CSS */
 
 body * {
     box-sizing: border-box;
@@ -11,6 +10,12 @@ body * {
 body {
     margin: 0;
     background: #F4F4F4;
+}
+
+/* Begin Debugging Code */
+header, main, main section, nav, .logo {
+    /* border: solid 2px #CCC; */
+    
 }
 
 .logo {
@@ -302,10 +307,5 @@ background-image: url(https://upload.wikimedia.org/wikipedia/en/2/21/Web_of_Spid
 .user1post,.user2post,.user3post,.user4post{
     font-size: 2em;
 }
-.fa-regular.fa-heart.liked {
-    color: red;
-  }
-  .bookmark-button.filled {
-    color: green;
-  }
+
   

@@ -45,7 +45,7 @@ def home():
 ##############################
 @app.route('/message')
 def exercise1():
-    return 'Hello world!'
+    return 'Hello'+' ' +current_user.get('first_name') +' ' + current_user.get('last_name') + '!'
 
 
 ###########################################
@@ -58,7 +58,7 @@ def exercise2():
     with open('data.json') as f:
         data = json.load(f)
     print(data)
-    return json.dumps({})
+    return json.dumps(data)
     
 
 
@@ -79,8 +79,9 @@ e.g., http://127.0.0.1:5000/yelp-proxy/location=NY,%20NY&term=chinese&count=3
 @app.route('/data/yelp/')
 @app.route('/data/yelp')
 def exercise3():
-    search_term = 'pizza'
-    location = 'Asheville, NC'
+    print(request.args)
+    search_term = request.args.get('term')
+    location = request.args.get('location')
     # go fetch data from another server and give it to the requestor:
     url = 'https://www.apitutor.org/yelp/simple/v3/businesses/search?location={location}&term={search_term}&limit={count}'.format(
         location=location, 
@@ -101,11 +102,14 @@ def exercise4():
     with open('data.json') as f:
         quotes = json.load(f)
     print(quotes)
+    random_quote = random.choice(quotes)
     return render_template(
         'quote-of-the-day.html',
-        user=current_user
-    )
+        user=current_user,
+        quote=random_quote
 
+    )
+        
 
 #########################################################
 # Exercise 5: Merge someone else's data with a template #

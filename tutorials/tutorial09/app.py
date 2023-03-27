@@ -127,7 +127,7 @@ def exercise5():
         location, search_term)
     response = requests.get(url)
     restaurants = response.json()
-    pprint(restaurants[0])  # for debugging
+    print(restaurants[0])  # for debugging
     return render_template(
         'restaurant.html',
         endpoint='/ui/first-restaurant/',

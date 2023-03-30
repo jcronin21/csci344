@@ -1,29 +1,29 @@
 import React, { useEffect, useState } from 'react';
 
-export default function Stories() {
-    // logic here
-    const[stories, setStories] = useState([]);
+export default function Stories({token}) {  
+  const [stories, setStories] = useState(null);
+ 
+  useEffect(() => {
+      async function fetchStories() {
+          const response = await fetch('/api/stories', {
+              headers: getHeaders(token)
+          });
+          const data = await response.json();
+          setStories(data)
+      }
+      fetchStories();
 
-    useEffect(()=>{
-        fetch('/api/stories')
-        .then(response => response.json())
-        .then(data => setStories(data.stories))
-    
-    }, []);
-
-
-    // return some JSX
-    return (
-        <div className="stories">
-          {stories.map(story => (
-            <div key={story.id} className="story">
-              <img src={story.image} alt="Story thumbnail" />
-              <div className="story-details">
-                <h3>{story.title}</h3>
-                <p>{story.content}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
+  }, [token]);  
+ 
+  // return some HTML:
+  if (!stories) {
+      return '';
+  }
+  return (
+      stories.map(story => {
+          return (
+              <Story model={story} key={'story-' + story.id} />
+          )
+      })
+  );    
+}

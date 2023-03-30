@@ -5,10 +5,19 @@ export default function Suggestions() {
   const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
-    fetch('/api/suggestions')
-      .then((response) => response.json())
-      .then((data) => setSuggestions(data));
-  }, []);
+    async function fetchSuggestions(){
+      const response = await fetch('/api/suggestions',{
+        headers:getHeaders(token)
+      });
+      const data = await response.json();
+      setSuggestions(data);
+    }
+    fetchSuggestions();
+  },[token]);
+  if(!suggestions){
+    return '';
+  }
+    
 
     // return some JSX
     return (

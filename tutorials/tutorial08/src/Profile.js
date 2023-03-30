@@ -1,17 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function Profile({profile}) {
     // some logic here:
-    console.log(profile);
+   const[profile, setProfile] = useState(null);
+   console.log("Profile!!");
+   useEffect(()=>{
+    async function fetchProfile(){
+        const response = await fetch('/api/profile',{
+            headers:getHeaders(token)
+        });
+        const data = await response.json();
+        setProfile(data)
+
+    }
+    fetchProfile();
+},[token]);
+if (!profile) {
+    return '';
+}
+   
  
     
     
 
 
     // return some JSX
-    if (!profile) {
-        return <div>loading</div>;
-    }
+    // if (!profile) {
+    //     return <div>''</div>;
+    // }
     
     return (
         <header>

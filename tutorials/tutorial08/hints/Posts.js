@@ -1,5 +1,5 @@
 import React from 'react';
-import {getHeaders} from './utils';
+import {getHeaders} from '../src/utils';
 import { useState, useEffect } from "react";
 
 

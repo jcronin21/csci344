@@ -2,10 +2,10 @@ import React from 'react';
 import Post from './Post';
 
 import { useState, useEffect } from "react";
-import {getHeaders} from './utils';
+import { getHeaders } from './utils';
 
-export default function Posts({token}) {
-    const [posts, setPosts] = useState([]); 
+export default function Posts({ token }) {
+    const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         async function fetchPosts() {
@@ -23,12 +23,12 @@ export default function Posts({token}) {
         return <div id="posts"></div>
     }
 
-   
+
     return (
         <div id="posts">
             {
-            posts.map(post => <Post post = {post} token ={token}/>)
-        }
+                posts.map(post => <Post post={post} token={token} key={post.id} />)
+            }
         </div>
-    );     
+    );
 }

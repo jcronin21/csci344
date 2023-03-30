@@ -2,7 +2,7 @@ import React from 'react';
 import {getHeaders} from './utils';
 import { useState } from "react";
 
-export default function Suggestion({user, token}) {
+export default function Suggestion({user,token}) {
    
     const [followingId, setFollowingId] = useState(null);
 

@@ -36,6 +36,6 @@ export default function LikeButton({post,token,requeryPost}){
 
 //return some JSX:
     return(
-        <button>onClick = {likeUnlike}={likeId ? 'unlike': 'like'}</button>
+        <button onClick = {likeUnlike}> {likeId ? 'unlike': 'like'}</button>
     )
 }

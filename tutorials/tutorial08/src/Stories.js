@@ -20,13 +20,10 @@ export default function Stories({token}) {
   if (!stories) {
       return '';
   }
-  return (
-      stories.map(story => {
-          return (
-              <div>
-                {story.user.username}
-              </div>
-          )
-      })
-  );    
-}
+// return the stories:
+return (
+  stories.map(stories => {
+    return (
+        <Stories model={stories} key={'stories-' + stories.id} />
+    )
+    }))}

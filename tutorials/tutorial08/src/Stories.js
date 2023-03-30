@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getHeaders } from './utils';
 
 export default function Stories({token}) {  
   const [stories, setStories] = useState(null);
@@ -22,7 +23,9 @@ export default function Stories({token}) {
   return (
       stories.map(story => {
           return (
-              <Story model={story} key={'story-' + story.id} />
+              <div>
+                {story.user.username}
+              </div>
           )
       })
   );    

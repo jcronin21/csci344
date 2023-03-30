@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Suggestion from './Suggestion';
+import { getHeaders } from './utils';
 
-export default function Suggestions() {
+export default function Suggestions({token}) {
   const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getHeaders } from './utils';
 
-export default function Stories({token}) {  
+export default function StoriesShown({token}) {  
   const [stories, setStories] = useState(null);
  
   useEffect(() => {
@@ -21,9 +21,18 @@ export default function Stories({token}) {
       return '';
   }
 // return the stories:
-return (
-  stories.map(stories => {
+    if (!stories) {
+        return '';
+    }
     return (
-        <Stories model={stories} key={'stories-' + stories.id} />
-    )
-    }))}
+        stories.map(story => {
+            return (
+                <Story model={story} key={'story-' + story.id} token ={token} />
+            )
+        })
+    );     
+}
+
+function Story({model}){
+    return <div>{model.text}</div>;
+}

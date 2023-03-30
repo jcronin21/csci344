@@ -2,7 +2,7 @@ import React from 'react';
 import NavLinks from './NavLinks';
 import Profile from './Profile.js';
 import Suggestions from './Suggestions';
-import Stories from './Stories';
+import Stories from './StoriesShown';
 import Posts from './Posts';
 
 import { useState, useEffect } from "react";
@@ -41,7 +41,7 @@ export default function App ({token}) {
             </aside>
 
             <main>
-                <Stories token={token} />
+                {/* <Stories token={token} /> */}
                 <Posts token={token} />
             </main>
 

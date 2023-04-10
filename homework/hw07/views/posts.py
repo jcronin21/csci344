@@ -1,6 +1,6 @@
 from flask import Response, request
 from flask_restful import Resource
-from models import Post, db
+from models import Post, Following, db
 from views import get_authorized_user_ids
 
 import json
@@ -13,9 +13,36 @@ class PostListEndpoint(Resource):
     def __init__(self, current_user):
         self.current_user = current_user
 
+    
+#user doesnt specify a limit: 20
+# user specifies a valid int <= 50:
+#    that number
+#user gives you abc -> 400 error
+# user gives you a limi 51 -> 400 error
     def get(self):
+        limit = request.args.get('limit')
         # get posts created by one of these users:
-        posts = Post.query.limit(10).all()
+        #1 get all of the user ids of the ppl that the user 12 is following 
+        following = Following.query.filter_by(user_id=self.current_user.id).all()
+        friend_ids = []
+        #building a list of friend usernames
+        for rec in following:
+            friend_ids.append(rec.following_id)
+        friend_ids.append(self.current_user.id)
+        print(friend_ids)
+        try:
+            limit = (request.args.get('limit')) or 20
+            limit = int(limit)
+        except:
+            return Response(
+                json.dumps({'error': 'no string fro limit.'}), status=400
+            )
+        if limit > 50:
+            return Response(
+                json.dumps({'error': 'Bad data. Limit cannot exceed 20.'}), status =400
+            )
+        #posts = Post.query.filter_by(user_id = self.current_user.id).all()
+        posts = Post.query.filter(Post.user_id.in_(friend_ids)).limit(limit)
         return Response(json.dumps([post.to_dict() for post in posts]), mimetype="application/json", status=200)
 
     def post(self):
@@ -44,7 +71,9 @@ class PostDetailEndpoint(Resource):
 
     def get(self, id):
         # get the post based on the id
-        return Response(json.dumps({}), mimetype="application/json", status=200)
+        post = Post.query.get(id)
+
+        return Response(json.dumps(post.to_dict()), mimetype="application/json", status=200)
 
 def initialize_routes(api):
     api.add_resource(

@@ -8,6 +8,10 @@ import json
 def get_path():
     return request.host_url + 'api/posts/'
 
+def get_list_of_user_ids_in_my_network():
+    following = Following.query.filter_by(user_id=self.current_user.id).all()
+    friend_ids = []
+
 class PostListEndpoint(Resource):
 
     def __init__(self, current_user):
@@ -66,14 +70,20 @@ class PostDetailEndpoint(Resource):
 
     def delete(self, id):
         # delete post where "id"=id
-        return Response(json.dumps({}), mimetype="application/json", status=200)
+        pass
+    
 
 
     def get(self, id):
         # get the post based on the id
         post = Post.query.get(id)
-
-        return Response(json.dumps(post.to_dict()), mimetype="application/json", status=200)
+        if post is None:
+            error_message ={
+                'error': ' post {0} does not exist.'.format(id)
+            }
+            return Response(json.dumps(error_message), mimetype="application/json",status=404)
+        else:
+         return Response(json.dumps(post.to_dict()), mimetype="application/json", status=200)
 
 def initialize_routes(api):
     api.add_resource(

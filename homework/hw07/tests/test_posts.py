@@ -289,7 +289,7 @@ if __name__ == '__main__':
         TestPostDetailEndpoint('test_post_get'),                            # get (individual)
         TestPostDetailEndpoint('test_post_get_invalid_id_404'),             # get (individual) 
         TestPostDetailEndpoint('test_post_get_id_does_not_exist_404'),      # get (individual)
-        # TestPostDetailEndpoint('test_post_get_unauthorized_id_404')         # get (individual)
+        TestPostDetailEndpoint('test_post_get_unauthorized_id_404')         # get (individual)
     ])
 
     unittest.TextTestRunner(verbosity=2).run(suite)

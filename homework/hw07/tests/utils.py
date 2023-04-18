@@ -423,4 +423,6 @@ def get_liked_post_by_id(id):
 
 def get_following_by_id(id):
     return get_x_by_id('following', id)
-        
+
+def get_post_that_user_cannot_edit_delete(user_id):
+    return get_post_that_user_cannot_access(user_id)

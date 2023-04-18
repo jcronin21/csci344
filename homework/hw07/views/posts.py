@@ -8,14 +8,47 @@ import json
 def get_path():
     return request.host_url + 'api/posts/'
 
-def get_list_of_user_ids_in_my_network():
-    following = Following.query.filter_by(user_id=self.current_user.id).all()
-    friend_ids = []
-
 class PostListEndpoint(Resource):
 
     def __init__(self, current_user):
         self.current_user = current_user
+
+    def get(self):
+        me_and_my_friend_ids = access_utils.get_list_of_user_ids_in_my_network(self.current_user.id)
+        try:
+            limit = request.args.get('limit') or 20
+            limit = int(limit)
+        except:
+            return Response(
+                json.dumps({'error': 'No string for limit.'}), status=400
+            )
+        if limit > 50:
+            return Response(
+                json.dumps({'error': 'Bad data. Limit cannot exceed 20.'}), status=400
+            )
+        posts = Post.query.filter(Post.user_id.in_(me_and_my_friend_ids)).limit(limit)
+        return Response(json.dumps([post.to_dict() for post in posts]), mimetype="application/json", status=200)
+
+    def post(self):
+        # request.get_json() is holding the data that the user
+        # just sent over the network. Stored as a python dictionary
+        body = request.get_json()
+        if not body.get('image_url'):
+            return Response(json.dumps({'error': 'image_url required'}), status=400)
+
+        # convert the data that the user sent over HTTP to a SQLAlchemy object
+        new_post = Post(
+            image_url=body.get('image_url'),
+            user_id=self.current_user.id, # must be a valid user_id or will throw an error
+            caption=body.get('caption'),
+            alt_text=body.get('alt_text')
+        )
+        # save it to the database
+        db.session.add(new_post)    # issues the insert statement
+        db.session.commit()  
+
+        # send the new data object to the user
+        return Response(json.dumps(new_post.to_dict()), mimetype="application/json", status=201)
 
     
 #user doesnt specify a limit: 20
@@ -51,29 +84,55 @@ class PostListEndpoint(Resource):
 
     def post(self):
         # create a new post based on the data posted in the body 
-        body = request.get_json()
-        print(body)  
-        return Response(json.dumps({}), mimetype="application/json", status=201)
+        data = request.get_json()
+        if not data or 'image_url' not in data:
+            error_message={'error': 'Missing required field: image_url'}
+            return Response(json.dumps(error_message), status=400)
+        post = Post(
+            user_id= self.current_user.id,
+            image_url=data['image_url'],
+            caption=data.get('caption'),
+            alt_text=data.get('alt_text'),
+        )
+        db.session.add(post)
+
+        response_data = {'id':post.id, 'url': get_path()+str(post.id)}
+
+        # body = request.get_json()
+        # print(body)  
+        return Response(json.dumps({}), mimetype="application/json", status=200)
+
         
 class PostDetailEndpoint(Resource):
 
     def __init__(self, current_user):
         self.current_user = current_user
         
-
+    @access_utilis.can_modify_or_404
     def patch(self, id):
         # update post based on the data posted in the body 
         body = request.get_json()
-        print(body)       
-        return Response(json.dumps({}), mimetype="application/json", status=200)
+        post=Post.query.get(id)
 
+        if body.get('image_url'):
+            post.image_url = body.get('image_url')
+        if body.get('caption'):
+            post.caption =body.get('caption')
+        if body.get('alt_text'):
+            post.alt_text = body.get('alt_text')
 
+            db.session.commit()      
+        return Response(json.dumps(post.to_dict()), mimetype="application/json", status=200)
+
+    @access_utils.can_modify_or_404
     def delete(self, id):
         # delete post where "id"=id
-        pass
+        Post.query.filter_by(id=id).delete()
+        db.session.commit()
+        return Response(json.dumps(None), mimetype="application/json",status=200)
     
 
-
+    @access_utils.can_view_or_404
     def get(self, id):
         # get the post based on the id
         post = Post.query.get(id)

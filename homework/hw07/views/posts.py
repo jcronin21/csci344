@@ -2,6 +2,7 @@ from flask import Response, request
 from flask_restful import Resource
 from models import Post, Following, db
 from views import get_authorized_user_ids
+import access_utils
 
 import json
 
@@ -56,6 +57,35 @@ class PostListEndpoint(Resource):
 #    that number
 #user gives you abc -> 400 error
 # user gives you a limi 51 -> 400 error
+class PostEndpoint(Resource):
+    def __init__(self, current_user):
+        self.current_user = current_user
+    def patch(self,id):
+        post = Post.query.get(id)
+        if not post:
+            return Response(json.dumps({'error': 'Post not found'}), status = 404)
+        if post.user_id!=self.current_user.id:
+            return Response(json.dumps({'error': 'exit'}), status = 401)
+        body = request.get_json()
+        if body.get('image_url'):
+            post.image_url = body.get('image_url')
+        if body.get('caption'):
+            post.caption = body.get('caption')
+        if body.get('alt_text'):
+            post.alt_text = body.get('alt_text')
+
+        db.session.commit()
+
+        return Response(json.dumps(post.to_dict()), mimetype ="application/json", status = 200)
+    def delete(self,id):
+
+        post = Post.query.get(id)
+        if not post:
+            return Response(json.dumps({'error': 'Post not found'}), status = 404)
+        if post.user_id != self.current_user.id:
+            return Response(json.dumps({'erorr:' 'none'}), status=401)
+        
+        db.session.delete(post)
     def get(self):
         limit = request.args.get('limit')
         # get posts created by one of these users:
@@ -108,7 +138,7 @@ class PostDetailEndpoint(Resource):
     def __init__(self, current_user):
         self.current_user = current_user
         
-    @access_utilis.can_modify_or_404
+    @access_utils.can_modify_or_404
     def patch(self, id):
         # update post based on the data posted in the body 
         body = request.get_json()
